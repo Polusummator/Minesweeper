@@ -141,19 +141,7 @@ def zero(id):
             
 
 def Exit(event):
-    root.destroy()
-    try:
-        root2.destroy()
-    except NameError:
-        pass
-    except _tkinter.TclError:
-        pass
-    try:
-        root1.destroy()
-    except _tkinter.TclError:
-        pass
-    except NameError:
-        pass
+    sys.exit(0)
     
 
 def Reset(event):
@@ -202,31 +190,111 @@ def ok(event):
     root3.destroy()
 
 
+def exit_level(event):
+    root3.destroy()
+    sys.exit(0)
+    
+
 def level():
-    global root3, var
+    global var, varr, root3
     root3 = Tk()
-    root3.title('Loss')
-    root3.geometry('400x180+650+300')
+    root3.title('Level')
+    root3.geometry('400x280+650+300')
     root3.resizable(0, 0)
     lab = Label(root3, text='Select difficulty level', font='Fixedays 18', fg='brown')
     lab.pack()
     var = IntVar()
+    var.set(2)
+    varr = 2
     rbutton1 = Radiobutton(root3, text='BEGINNER            Field: 9х9 Mines: 10', font='Arial 12', variable=var, value=1)
-    rbutton2 = Radiobutton(root3, text='MASTER                Field: 16х16 Mines: 40', font='Arial 12', variable=var, value=2)
-    rbutton3 = Radiobutton(root3, text='PROFESSIONAL  Field: 30х30 Mines: 150', font='Arial 12', variable=var, value=3)
+    rbutton2 = Radiobutton(root3, text='MEDIUM                 Field: 12х12 Mines: 30', font='Arial 12', variable=var, value=2)
+    rbutton3 = Radiobutton(root3, text='MASTER                Field: 16х16 Mines: 40', font='Arial 12', variable=var, value=3)
+    rbutton4 = Radiobutton(root3, text='PROFESSIONAL  Field: 30х30 Mines: 150', font='Arial 12', variable=var, value=4)
+    rbutton5 = Radiobutton(root3, text='GENIUS                  Field: 40х40 Mines: 300', font='Arial 12', variable=var, value=5)
+    rbutton6 = Radiobutton(root3, text='SPECIAL                Create your level', font='Arial 12', variable=var, value=6)
     but = Button(root3, text='Ok', width=3, font='Fixedays 12', fg='white', bg='green')
-    rbutton1.place(x=10, y=50)
-    rbutton2.place(x=10, y=80)
-    rbutton3.place(x=10, y=110)
-    but.place(x=180, y=140)
+    ex = Button(root3, text='Exit', width=4, font='Fixedays 12', fg='white', bg='blue')
+    rbutton1.place(x=10, y=40)
+    rbutton2.place(x=10, y=70)
+    rbutton3.place(x=10, y=100)
+    rbutton4.place(x=10, y=130)
+    rbutton5.place(x=10, y=160)
+    rbutton6.place(x=10, y=190)
+    but.place(x=140, y=240)
+    ex.place(x=200, y=240)
+    ex.bind('<Button-1>', exit_level)
     but.bind('<Button-1>', ok)
     root3.mainloop()
 
 
+def pr_ok(event):
+    global SQUARES, MINES
+    l_m = int(str(list_mines.curselection())[1:-2])
+    l_f = int(str(list_field.curselection())[1:-2])
+    s_m = int(l_mines[l_m])
+    s_f = int(l_field[l_f].split('x')[0]) ** 2
+    if s_m > s_f:
+        lab.config(text='Mines more than cells!')
+    else:
+        SQUARES = s_f
+        MINES = s_m
+        root4.destroy()
+        
+
 def main():
-    global root, clicked, SQUARE_SIZE, SQUARES, flags, GRID, MINES_NUM, MINES, z, canvas, WITHOUT_BOMBS
+    global root, clicked, SQUARE_SIZE, SQUARES, flags, GRID, MINES_NUM, MINES, z, canvas, WITHOUT_BOMBS, zz, l_field, l_mines, list_field, list_mines, lab, root4
+    zz = True
     sys.setrecursionlimit(500000)
     level()
+    if varr == 1:
+        SQUARES = 81
+        MINES = 10
+    elif varr == 2:
+        SQUARES = 144
+        MINES = 30
+    elif varr == 3:
+        SQUARES = 256
+        MINES = 40
+    elif varr == 4:
+        SQUARES = 900
+        MINES = 150
+    elif varr == 5:
+        SQUARES = 1600
+        MINES = 300
+    elif varr == 6:
+        root4 = Tk()
+        root4.title('Create level')
+        root4.geometry('400x300+650+300')
+        root4.resizable(0, 0)
+        l_mines = ['10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '110', '120', '130', '140', '150',
+                   '160', '170', '180', '190', '200', '210', '220', '230', '240', '250', '260', '270', '280', '290',
+                   '300']
+        l_field = ['9x9', '10x10', '11x11', '12x12', '13x13', '14x14', '15x15', '16x16', '17x17', '18x18', '19x19',
+                   '20x20', '21x21', '22x22', '23x23', '24x24', '25x25', '26x26', '27x27', '28x28', '29x29', '30x30',
+                   '31x31', '32x32', '33x33', '34x34', '35x35', '36x36', '37x37', '38x38', '39x39', '40x40']
+        lab = Label(root4, text='Create your level', font='Fixedays 18', fg='brown')
+        lab_mines = Label(root4, text='Select number of mines', font='Fixedays 12', fg='brown')
+        lab_field = Label(root4, text='Select the size of the field', font='Fixedays 12', fg='brown')
+        lab_ps = Label(root4, text='* you can scroll through the lists', font='Fixedays 9 italic', fg='AntiqueWhite4')
+        ok = Button(root4, text='Ok', font='Fixedays 10', fg='white', bg='green', width=10)
+        ex = Button(root4, text='Exit', font='Fixedays 10', fg='white', bg='blue')
+        list_mines = Listbox(exportselection=False)
+        list_field = Listbox(exportselection=False)
+        for m in l_mines:
+            list_mines.insert(END, m)
+        for f in l_field:
+            list_field.insert(END, f)
+        lab_mines.place(x=10, y=50)
+        lab_field.place(x=200, y=50)
+        list_mines.place(x=30, y=80)
+        list_field.place(x=230, y=80)
+        lab.pack()
+        ok.place(x=143, y=250)
+        ex.place(x=15, y=10)
+        ex.bind('<Button-1>', Exit)
+        ok.bind('<Button-1>', pr_ok)
+        lab_ps.place(x=210, y=277)
+        root4.mainloop()
     root = Tk()
     root.resizable(0, 0)
     z = True
@@ -235,18 +303,6 @@ def main():
     r = []
     root.title('Minesweeper')
     SQUARE_SIZE = 20
-    if varr == 1:
-        SQUARES = 81
-        MINES = 10
-    elif varr == 2:
-        SQUARES = 256
-        MINES = 40
-    elif varr == 3:
-        SQUARES = 900
-        MINES = 150
-    elif varr == 0:
-        SQUARES = 256
-        MINES = 40
     MINES_NUM = set(random.sample(range(1, SQUARES + 1), MINES))
     ALL_SQUARES = set(range(1, SQUARES + 1))
     WITHOUT_BOMBS = ALL_SQUARES.difference(MINES_NUM)
